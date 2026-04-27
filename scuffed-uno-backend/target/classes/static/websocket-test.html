@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>UNO WebSocket Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <style>
+        #messages {
+            border: 1px solid #ddd;
+            height: 300px;
+            overflow-y: scroll;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        input,
+        button {
+            padding: 5px;
+            margin: 5px 0;
+        }
+
+        .section {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #eee;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>UNO WebSocket Test</h2>
+
+    <div class="section">
+        <button onclick="connect()">Connect</button>
+        <button onclick="disconnect()">Disconnect</button>
+        <div>Status: <span id="status">DISCONNECTED</span></div>
+    </div>
+
+    <div class="section">
+        <h3>Quick Test</h3>
+        <input type="text" id="testMessage" placeholder="Test message" value="Hello" />
+        <button onclick="sendTestMessage()">Send Test Message</button>
+    </div>
+
+    <div class="section">
+        <h3>Subscribe to Game</h3>
+        <input type="text" id="gameId" placeholder="Game ID" />
+        <button onclick="subscribeToGame()">Subscribe</button>
+    </div>
+
+    <div class="section">
+        <h3>Send Card Play</h3>
+        <input type="text" id="cardInput" placeholder="Card (e.g., RED_SEVEN)" />
+        <button onclick="sendCard()">Play Card</button>
+    </div>
+
+    <h3>Messages</h3>
+    <div id="messages"></div>
+
+    <script>
+        let stompClient = null;
+        let currentGameId = null;
+        const statusElement = document.getElementById('status');
+        const messagesElement = document.getElementById('messages');
+
+        function connect() {
+            const socket = new SockJS('/uno-websocket');
+            stompClient = Stomp.over(socket);
+
+            stompClient.connect({}, function (frame) {
+                statusElement.textContent = 'CONNECTED';
+                addMessage("Connected to WebSocket server");
+                console.log('Connected: ' + frame);
+
+                // Subscribe to test topic
+                stompClient.subscribe('/topic/test', function (message) {
+                    addMessage("Test response: " + message.body);
+                });
+            }, function (error) {
+                statusElement.textContent = 'ERROR';
+                addMessage("Error connecting: " + error);
+                console.log('Error: ' + error);
+            });
+        }
+
+        function disconnect() {
+            if (stompClient !== null) {
+                stompClient.disconnect();
+                stompClient = null;
+                statusElement.textContent = 'DISCONNECTED';
+                addMessage("Disconnected from WebSocket server");
+            }
+        }
+
+        function sendTestMessage() {
+            if (stompClient === null) {
+                addMessage("Not connected to server");
+                return;
+            }
+
+            const message = document.getElementById('testMessage').value.trim();
+            stompClient.send("/app/test", {}, message);
+            addMessage("Sent test message: " + message);
+        }
+
+        function subscribeToGame() {
+            if (stompClient === null) {
+                addMessage("Not connected to server");
+                return;
+            }
+
+            currentGameId = document.getElementById('gameId').value.trim();
+            if (!currentGameId) {
+                addMessage("Please enter a Game ID");
+                return;
+            }
+
+            stompClient.subscribe('/topic/game/' + currentGameId, function (message) {
+                addMessage("Received: " + message.body);
+            });
+
+            addMessage("Subscribed to game: " + currentGameId);
+        }
+
+        function sendCard() {
+            if (stompClient === null) {
+                addMessage("Not connected to server");
+                return;
+            }
+
+            if (!currentGameId) {
+                addMessage("Please subscribe to a game first");
+                return;
+            }
+
+            const card = document.getElementById('cardInput').value.trim();
+            if (!card) {
+                addMessage("Please enter a card");
+                return;
+            }
+
+            stompClient.send("/app/playCard", {}, JSON.stringify({
+                gameId: currentGameId,
+                card: card
+            }));
+
+            addMessage("Sent card: " + card + " to game: " + currentGameId);
+        }
+
+        function addMessage(message) {
+            const msgElement = document.createElement('div');
+            msgElement.textContent = new Date().toLocaleTimeString() + ': ' + message;
+            messagesElement.appendChild(msgElement);
+            messagesElement.scrollTop = messagesElement.scrollHeight;
+        }
+    </script>
+</body>
+
+</html>

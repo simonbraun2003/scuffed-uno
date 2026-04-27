@@ -1,0 +1,27 @@
+stages:
+  - build-image
+  - deploy
+
+variables:
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_HOST: "tcp://docker:2375"
+
+build_and_push_image:
+  stage: build-image
+  image: docker:27
+  services:
+    - name: docker:27-dind
+      command: ["--tls=false"]
+  script:
+    - echo "Login bei GitLab Container Registry"
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+
+    - echo "Docker Image bauen"
+    - docker build -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" -t "$CI_REGISTRY_IMAGE:latest" -f "./unoFrontendReact/Dockerfile" .
+
+    - echo "Docker Image pushen"
+    - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+    - docker push "$CI_REGISTRY_IMAGE:latest"
+  only:
+    - main
+    - master
