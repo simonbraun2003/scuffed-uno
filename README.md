@@ -1,4 +1,4 @@
-# 🎮 Scuffed UNO
+# Scuffed UNO
 
 Ein webbasiertes UNO-Spiel mit Echtzeit-Multiplayer, entwickelt mit **Spring Boot**, **React**, **TypeScript** und **WebSockets**.
 
@@ -6,7 +6,7 @@ Das Projekt besteht aus einem separaten Backend- und Frontend-Teil und ermöglic
 
 ---
 
-# 🏗 Projektstruktur
+# Projektstruktur
 
 ```text
 scuffed-uno/
@@ -16,7 +16,7 @@ scuffed-uno/
 
 ---
 
-# 🚀 Technologien
+# Technologien
 
 ## Backend
 
@@ -40,7 +40,7 @@ scuffed-uno/
 
 ---
 
-# ⚙️ Setup
+# Setup
 
 ## Voraussetzungen
 
@@ -54,7 +54,7 @@ Installiert sein sollten:
 
 ---
 
-# 🔧 Backend starten
+# Backend starten
 
 ## 1. In das Backend-Verzeichnis wechseln
 
@@ -107,7 +107,7 @@ http://localhost:8080/swagger-ui.html
 
 ---
 
-# 💻 Frontend starten
+# Frontend starten
 
 ## 1. In das Frontend-Verzeichnis wechseln
 
@@ -148,7 +148,7 @@ Technologien:
 
 ---
 
-# 🔐 Authentifizierung
+# Authentifizierung
 
 Die Authentifizierung erfolgt über JWT Tokens.
 
@@ -156,7 +156,7 @@ Nach erfolgreichem Login erhält der Client ein Token, das für geschützte Requ
 
 ---
 
-# 📡 API Endpoints
+# API Endpoints
 
 ## Auth
 
@@ -174,7 +174,7 @@ Nach erfolgreichem Login erhält der Client ein Token, das für geschützte Requ
 
 ---
 
-# 🐳 Docker
+# Docker
 
 Im Backend ist bereits ein Dockerfile vorhanden.
 
@@ -192,7 +192,7 @@ docker run -p 8080:8080 scuffed-uno
 
 ---
 
-# 📁 Wichtige Komponenten
+# Wichtige Komponenten
 
 ## Backend
 
@@ -217,7 +217,7 @@ types/          # TypeScript Typen
 
 ---
 
-# 🧪 Entwicklung
+# Entwicklung
 
 ## Frontend Linting
 
