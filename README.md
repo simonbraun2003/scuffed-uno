@@ -137,7 +137,7 @@ http://localhost:5173
 
 ---
 
-# 🔌 WebSocket Kommunikation
+# WebSocket Kommunikation
 
 Das Spiel verwendet WebSockets für Echtzeitkommunikation zwischen Spielern.
 
